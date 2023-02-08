@@ -7,8 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -18,9 +19,11 @@ import java.util.Date;
 public class Attendance {
 
     @Id
+    @GeneratedValue
     private long id;
 
-    private Date date;
+    @DateTimeFormat(pattern="dd-MM-yyyy")
+    private LocalDate date;
     private AttendanceStatus status;
 
     @ManyToOne(cascade = CascadeType.ALL)

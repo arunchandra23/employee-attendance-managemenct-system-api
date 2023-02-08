@@ -51,4 +51,17 @@ public class ApplicationExceptionHandler {
                 .build();
         return new ResponseEntity<>(apiResponse,HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ApiResponse> badRequestExceptionHandler(BadRequestException exception){
+
+        ApiResponse apiResponse=ApiResponse.builder()
+                .data(new ArrayList<>())
+                .errors(Arrays.asList(exception.getLocalizedMessage()))
+                .message(exception.getMessage())
+                .status(HttpStatus.BAD_REQUEST)
+                .success(Boolean.FALSE)
+                .build();
+        return new ResponseEntity<>(apiResponse,HttpStatus.BAD_REQUEST);
+    }
 }
