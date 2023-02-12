@@ -20,6 +20,7 @@ public class DepartmentController {
     private DepartmentService departmentService;
 
     @PostMapping()
+
     public ResponseEntity<Department> addDepartment(@Valid @RequestBody DepartmentRequest departmentRequest){
         Department department=departmentService.addDepartment(departmentRequest);
         return  new ResponseEntity<>(department, HttpStatus.CREATED);

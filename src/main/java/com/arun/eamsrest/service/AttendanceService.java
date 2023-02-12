@@ -45,11 +45,14 @@ public class AttendanceService {
             if(attendance.getStatus()==AttendanceStatus.PRESENT){
                 throw new BadRequestException("Employee with id: "+employeeId+" is already marked "+AttendanceStatus.PRESENT);
             }
-            if(attendance.getStatus()==AttendanceStatus.ABSENT){
+            if(attendance.getStatus()==AttendanceStatus.ABSENT ||attendance.getStatus()==null){
                 attendanceRepository.changeAttendanceStatus(employeeId,Date.valueOf(attendanceRequest.getDate()),AttendanceStatus.PRESENT.ordinal());
                 apiResponse.setMessage(AppConstants.ATTENDANCE_STATUS_UPDATED);
                 apiResponse.setStatus(HttpStatus.OK);
                 return apiResponse;
+            }
+            if(attendance.getStatus()==null){
+
             }
 
 

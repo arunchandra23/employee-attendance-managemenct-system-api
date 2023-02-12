@@ -5,16 +5,14 @@ import com.arun.eamsrest.entity.attendance.Attendance;
 import com.arun.eamsrest.entity.role.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -39,6 +37,7 @@ public class Employee {
     private Set<Role> roles;
 
 
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "salary_id")
     private Salary salary;
@@ -50,6 +49,11 @@ public class Employee {
     @JsonIgnore
     @OneToMany(mappedBy = "employee")
     private List<Leave> leaves;
+
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "department_id")
+    private Department department;
 
 
 }

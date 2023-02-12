@@ -2,6 +2,7 @@ package com.arun.eamsrest.service;
 
 import com.arun.eamsrest.entity.role.Role;
 import com.arun.eamsrest.entity.role.RoleName;
+import com.arun.eamsrest.exception.BadRequestException;
 import com.arun.eamsrest.repository.RoleRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ public class RolesService {
     private ModelMapper modelMapper =new ModelMapper();
 
     public List<Role> addRoles() {
+
+        if(roleRepository.count()==3) throw new BadRequestException("Roles added already!");
         Role roleUser= Role.builder()
                 .name(RoleName.ROLE_USER)
                 .build();

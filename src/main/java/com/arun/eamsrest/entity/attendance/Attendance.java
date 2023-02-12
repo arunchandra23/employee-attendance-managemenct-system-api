@@ -2,6 +2,7 @@ package com.arun.eamsrest.entity.attendance;
 
 import com.arun.eamsrest.entity.Employee;
 import com.arun.eamsrest.entity.Leave;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,14 +19,17 @@ import java.time.LocalDate;
 @Builder
 public class Attendance {
 
+    @JsonIgnore
     @Id
     @GeneratedValue
     private long id;
 
     @DateTimeFormat(pattern="dd-MM-yyyy")
     private LocalDate date;
+//    @Enumerated(EnumType.STRING)
     private AttendanceStatus status;
 
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "employee_id")
     private Employee employee;

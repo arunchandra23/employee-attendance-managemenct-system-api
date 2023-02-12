@@ -2,6 +2,7 @@ package com.arun.eamsrest.entity;
 
 import com.arun.eamsrest.entity.attendance.Attendance;
 import com.arun.eamsrest.utils.LeaveStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,10 +20,12 @@ import java.util.Date;
 @Builder
 public class Leave {
 
+    @JsonIgnore
     @Id
     @GeneratedValue
     private long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "employee_id")
     private Employee employee;
@@ -34,6 +37,7 @@ public class Leave {
     @Enumerated(EnumType.STRING)
     private LeaveStatus status;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "leave",cascade = CascadeType.ALL)
     private Attendance attendance;
 

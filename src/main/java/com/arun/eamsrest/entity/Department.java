@@ -29,4 +29,7 @@ public class Department {
     private List<Salary> salaries;
 
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "department")
+    private List<Employee> employees;
 }
