@@ -24,9 +24,9 @@ public class Attendance {
     @GeneratedValue
     private long id;
 
-    @DateTimeFormat(pattern="dd-MM-yyyy")
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate date;
-//    @Enumerated(EnumType.STRING)
+    //    @Enumerated(EnumType.STRING)
     private AttendanceStatus status;
 
     @JsonIgnore

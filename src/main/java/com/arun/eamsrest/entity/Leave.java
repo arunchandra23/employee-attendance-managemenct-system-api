@@ -8,10 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.NaturalId;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Data
@@ -38,7 +36,7 @@ public class Leave {
     private LeaveStatus status;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "leave",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "leave", cascade = CascadeType.ALL)
     private Attendance attendance;
 
 

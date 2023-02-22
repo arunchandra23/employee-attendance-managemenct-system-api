@@ -29,10 +29,15 @@ public class ApiResponse implements Serializable {
     private String message;
     @JsonProperty("errors")
     private List<Object> errors;
+    @JsonProperty("data")
+    private Object data;
+    @JsonIgnore
+    private HttpStatus status;
 
-    public ApiResponse(){
-        this.errors=new ArrayList<>();
+    public ApiResponse() {
+        this.errors = new ArrayList<>();
     }
+
     public ApiResponse(Boolean success, String message, List<Object> errors, Object data, HttpStatus status) {
         this.success = success;
         this.message = message;
@@ -40,13 +45,6 @@ public class ApiResponse implements Serializable {
         this.data = data;
         this.status = status;
     }
-
-    @JsonProperty("data")
-    private Object data;
-
-    @JsonIgnore
-    private HttpStatus status;
-
 
 
     public ApiResponse(Boolean success, String message) {

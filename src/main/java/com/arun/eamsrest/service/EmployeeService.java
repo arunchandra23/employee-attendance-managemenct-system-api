@@ -28,6 +28,7 @@ import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -47,58 +48,60 @@ public class EmployeeService {
     private EmployeeRepository employeeRepository;
     @Autowired
     private DepartmentRepository departmentRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private RoleRepository roleRepository;
-    private ModelMapper modelMapper=new ModelMapper();
+    private ModelMapper modelMapper = new ModelMapper();
     @Autowired
     private AttendanceRepository attendanceRepository;
 
 
     public Employee addEmployee(long departmentId, EmployeeRequest employee) {
 
-        Department department=departmentRepository.findById(departmentId).orElseThrow(()->
-                 new ResourceNotFoundException("Department not found with id: "+departmentId)
+        Department department = departmentRepository.findById(departmentId).orElseThrow(() ->
+                new ResourceNotFoundException("Department not found with id: " + departmentId)
         );
-        Job job= Job.builder()
+        Job job = Job.builder()
                 .title(employee.getTitle())
                 .build();
-        Salary salary=Salary.builder()
+        Salary salary = Salary.builder()
                 .amount(employee.getAmount())
                 .department(department)
                 .job(job)
                 .build();
-        Set<Role> roles=new HashSet<>();
+        Set<Role> roles = new HashSet<>();
         roles.add(
                 roleRepository.findByName(RoleName.ROLE_USER)
         );
-        Employee emp1=Employee.builder()
+        Employee emp1 = Employee.builder()
                 .firstName(employee.getFirstName())
                 .lastName(employee.getLastName())
                 .age(employee.getAge())
                 .email(employee.getEmail())
-                .password(employee.getPassword())
+                .password(passwordEncoder.encode(employee.getPassword()))
                 .gender(employee.getGender())
                 .salary(salary)
                 .roles(roles)
                 .department(department)
                 .build();
-        Employee emp =employeeRepository.save(emp1);
+        Employee emp = employeeRepository.save(emp1);
         return emp;
     }
 
     public ApiResponse getAllEmployees() {
-        List<EmployeeResponse> all=new ArrayList<>();
-        employeeRepository.findAll().forEach((employee)->{
+        List<EmployeeResponse> all = new ArrayList<>();
+        employeeRepository.findAll().forEach((employee) -> {
 
-            SalaryResponse salary=SalaryResponse.builder()
+            SalaryResponse salary = SalaryResponse.builder()
                     .amount(employee.getSalary().getAmount())
-                    .department(modelMapper.map(employee.getSalary().getDepartment(),Department.class))
+                    .department(modelMapper.map(employee.getSalary().getDepartment(), Department.class))
                     .build();
-            JobResponse jobResponse =JobResponse.builder()
+            JobResponse jobResponse = JobResponse.builder()
                     .title(employee.getSalary().getJob().getTitle())
                     .build();
-            EmployeeResponse emp=EmployeeResponse.builder()
+            EmployeeResponse emp = EmployeeResponse.builder()
                     .firstName(employee.getFirstName())
                     .lastName(employee.getLastName())
                     .gender(employee.getGender())
@@ -112,7 +115,7 @@ public class EmployeeService {
         });
 
 
-        ApiResponse apiResponse=ApiResponse.builder()
+        ApiResponse apiResponse = ApiResponse.builder()
                 .success(Boolean.TRUE)
                 .status(HttpStatus.OK)
                 .message(AppConstants.RETRIEVAL_SUCCESS)
@@ -124,10 +127,10 @@ public class EmployeeService {
 
     public Employee updateEmployee(long employeeId, EmployeeRequest employee) {
 
-        Employee employee1=employeeRepository.findById(employeeId).orElseThrow(()->{
-            throw new ResourceNotFoundException("Employee not found with id: "+employeeId);
+        Employee employee1 = employeeRepository.findById(employeeId).orElseThrow(() -> {
+            throw new ResourceNotFoundException("Employee not found with id: " + employeeId);
         });
-        Salary salary=employee1.getSalary();
+        Salary salary = employee1.getSalary();
         salary.setAmount(employee.getAmount());
         salary.getJob().setTitle(employee.getTitle());
 
@@ -145,7 +148,7 @@ public class EmployeeService {
 
     public ApiResponse getEmployeeByDepartmentId(long departmentId) {
         List<Employee> employees = employeeRepository.findByDepartment_id(departmentId);
-        ApiResponse apiResponse= ApiResponse.builder()
+        ApiResponse apiResponse = ApiResponse.builder()
                 .success(Boolean.TRUE)
                 .status(HttpStatus.OK)
                 .message(AppConstants.RETRIEVAL_SUCCESS)
@@ -156,46 +159,46 @@ public class EmployeeService {
     }
 
     public ApiResponse getEmployeeAttendanceBetweenDates(long employeeId, LocalDate from, LocalDate to) {
-        System.out.println(">>>>>>>"+employeeId+from+to);
-        List<Attendance> attendances = attendanceRepository.findByEmployee_idAndDateBetween(employeeId,from, to);
-        ApiResponse apiResponse= ApiResponse.builder()
+        System.out.println(">>>>>>>" + employeeId + from + to);
+        List<Attendance> attendances = attendanceRepository.findByEmployee_idAndDateBetween(employeeId, from, to);
+        ApiResponse apiResponse = ApiResponse.builder()
                 .errors(new ArrayList<>())
                 .success(Boolean.TRUE)
                 .data(attendances)
                 .status(HttpStatus.OK)
                 .message(AppConstants.RETRIEVAL_SUCCESS)
                 .build();
-        if(attendances.size()==0){
+        if (attendances.size() == 0) {
             apiResponse.setMessage(AppConstants.NO_DATA_FOUND);
         }
         return apiResponse;
     }
 
     public ApiResponse getEmployeeAttendanceReport(long employeeId, LocalDate from, LocalDate to) {
-        List<Attendance> attendanceList = attendanceRepository.findByEmployee_idAndDateBetween(employeeId, from,to);
-        ApiResponse apiResponse=ApiResponse.builder()
+        List<Attendance> attendanceList = attendanceRepository.findByEmployee_idAndDateBetween(employeeId, from, to);
+        ApiResponse apiResponse = ApiResponse.builder()
                 .status(HttpStatus.OK)
                 .errors(new ArrayList<>())
                 .success(Boolean.TRUE)
                 .build();
-        if(attendanceList.size()==0){
+        if (attendanceList.size() == 0) {
             apiResponse.setData(new ArrayList<>());
             apiResponse.setMessage(AppConstants.NO_DATA_FOUND);
             return apiResponse;
         }
-        long p=attendanceList.stream().filter(x->
+        long p = attendanceList.stream().filter(x ->
                 x.getStatus() == AttendanceStatus.PRESENT).count();
-        long a=attendanceList.stream().filter(x->
+        long a = attendanceList.stream().filter(x ->
                 x.getStatus() == AttendanceStatus.ABSENT).count();
-        long l=attendanceList.stream().filter(x->
+        long l = attendanceList.stream().filter(x ->
                 x.getLeave() != null).count();
 
-        AttendanceReportResponse attendanceReportResponse=AttendanceReportResponse.builder()
+        AttendanceReportResponse attendanceReportResponse = AttendanceReportResponse.builder()
                 .totalDays(attendanceList.size())
                 .presentDays(p)
                 .absentDays(a)
                 .leaveDays(l)
-                .salary((employeeRepository.findById(employeeId).get().getSalary().getAmount()/30)*p)
+                .salary((employeeRepository.findById(employeeId).get().getSalary().getAmount() / 30) * p)
                 .build();
         apiResponse.setData(attendanceReportResponse);
         apiResponse.setMessage(AppConstants.RETRIEVAL_SUCCESS);

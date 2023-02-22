@@ -15,9 +15,7 @@ import com.arun.eamsrest.utils.AppConstants;
 import com.arun.eamsrest.utils.LeaveStatus;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +37,7 @@ public class LeaveService {
 
 
     //>>>>>>>>>>>>>>>util functions>>>>>>>>>
-    private ApiResponse utilUpdateStatus(String approved,long employeeId,LocalDate date){
+    private ApiResponse utilUpdateStatus(String approved, long employeeId, LocalDate date) {
         int updateStatus = leaveRepository.updateLeaveStatus(approved, employeeId, date);
         ApiResponse apiResponse = ApiResponse.builder()
                 .data(new ArrayList<>())

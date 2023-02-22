@@ -18,11 +18,11 @@ public class DepartmentService {
 
     @Autowired
     private DepartmentRepository departmentRepository;
-    private ModelMapper modelMapper =new ModelMapper();
+    private ModelMapper modelMapper = new ModelMapper();
 
     public Department addDepartment(DepartmentRequest departmentRequest) {
 
-        Department dep=modelMapper.map(departmentRequest,Department.class);
+        Department dep = modelMapper.map(departmentRequest, Department.class);
         Department save = departmentRepository.save(dep);
         return save;
     }

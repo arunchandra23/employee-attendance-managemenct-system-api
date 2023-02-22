@@ -15,8 +15,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class LeaveRequest {
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "dd-MM-yyyy")
-    @DateTimeFormat(pattern="dd-MM-yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate date;
 
     @NotBlank
